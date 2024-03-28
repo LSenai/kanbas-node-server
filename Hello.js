@@ -1,8 +1,8 @@
 export default function Hello(app) {
-    function rootHandler(req, res) {
-        res.send('Hello World!');
-    }
-    app.get('/', rootHandler);
-    app.listen(4000);
+    app.get('/hello', (req, res) => {
+        res.send('Life is good!')
+    });
+    app.get('/', (req, res) => {
+        res.send('Welcome to Full Stack Development!')
+    });
 }
-
