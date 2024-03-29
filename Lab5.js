@@ -12,9 +12,33 @@ const module = {
     description: "An opening discussion defining key terms and concepts in Human Rights", 
     course: "HR101"
 }
-  
+
+const todos = [
+    { id: 1, title: "Task 1", completed: false },
+    { id: 2, title: "Task 2", completed: true },
+    { id: 3, title: "Task 3", completed: false },
+    { id: 4, title: "Task 4", completed: true },
+];
+
 const Lab5 = (app) => {
 
+    /* WORKING WITH ARRAYS OF OBJECTS */
+    app.get("/a5/todos", (req, res) => {
+        res.json(todos);
+    });
+
+    /* Retrieving item by ID */
+    app.get("/a5/todos/:id", (req, res) => {
+        const { id } = req.params;
+        const todo = todos.find((t) => t.id === parseInt(id));
+        
+        if (!todo) {
+            res.status(404).json({ error: "Todo not found" }); // Send a 'Not Found' error
+        } else {
+            res.json(todo);
+        }
+    });
+    
     /* WORKING WITH OBJECTS */
     /* MODULE */
     app.get("/a5/module", (req, res) => {
