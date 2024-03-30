@@ -14,17 +14,44 @@ const module = {
 }
 
 const todos = [
-    { id: 1, title: "Task 1", completed: false },
-    { id: 2, title: "Task 2", completed: true },
-    { id: 3, title: "Task 3", completed: false },
-    { id: 4, title: "Task 4", completed: true },
+    { id: 1, title: "Task 1", completed: false , description: 'something'},
+    { id: 2, title: "Task 2", completed: true, description: "huh"},
+    { id: 3, title: "Task 3", completed: false, description: "3" },
+    { id: 4, title: "Task 4", completed: true, description: "4" },
 ];
 
 const Lab5 = (app) => {
 
+
     /* WORKING WITH ARRAYS OF OBJECTS */
+    /* TODOS */
+    /* 
+    CREATE operations 
+    It's important to note that CREATE operations need to be implemented BEFORE READ.
+    This is because the :id path parameter would interpret ':id' path param as the 'create' --> error.
+    */
+   app.get("/a5/todos/create", (req, res) => {
+    const newTodo = {
+        id: new Date().getTime(),
+        title: "New Task",
+        completed: false,  
+    };
+    todos.push(newTodo);
+    res.json(todos);
+   });
+
+    /* READ OPERATIONS */
     app.get("/a5/todos", (req, res) => {
-        res.json(todos);
+        // build out commmands for case of query strings
+        const { completed } = req.query; // checks if 'completed' is in the URL query (right phrasing?)
+        if (completed  !== undefined) { // if 'completed' was in the query, then it's not undefined, then execute if block
+            const completedBool = completed === "true"; 
+            const completedTodos = todos.filter(
+                (t) => t.completed === completedBool);
+            res.json(completedTodos);
+            return;
+        }
+        res.json(todos); // if no query string, this just returns 'em all
     });
 
     /* Retrieving item by ID */
@@ -38,7 +65,41 @@ const Lab5 = (app) => {
             res.json(todo);
         }
     });
-    
+
+    /* DELETE OPERATIONS */
+    app.get("/a5/todos/:id/delete", (req, res) => {
+        const { id } = req.params;
+        const todo = todos.find((t) => t.id === parseInt(id));
+        const todoIndex = todos.indexOf(todo);
+        if (todoIndex !== -1) {
+            todos.splice(todoIndex, 1);
+        }
+        res.json(todos);
+    });
+
+    /* UPDATE */
+    app.get("/a5/todos/:id/title/:title", (req, res) => {
+        const { id, title } = req.params;
+        const todo = todos.find((t) => t.id === parseInt(id));
+        todo.title = title;
+        res.json(todos);
+    });
+
+    app.get("/a5/todos/:id/description/:description", (req, res) => {
+        const {id, description} = req.params
+        const todo = todos.find((t) => t.id === parseInt(id));
+        todo.description = description;
+        res.json(todos);
+    })
+
+    app.get("/a5/todos/:id/completed/:completed", (req, res) => {
+        const {id, completed} = req.params
+        const todo = todos.find((t)=>t.id === parseInt(id));
+        const boolCompleted = completed === 'true';
+        todo.completed == boolCompleted;
+        res.json(todos);
+    })
+
     /* WORKING WITH OBJECTS */
     /* MODULE */
     app.get("/a5/module", (req, res) => {
