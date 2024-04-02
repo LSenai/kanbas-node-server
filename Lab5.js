@@ -6,7 +6,6 @@ const assignment = {
     due: "2021-10-10", completed: false, score: 0,
   };
 
-
 const module = {
     id: 1, name: "What is Human Rights?",
     description: "An opening discussion defining key terms and concepts in Human Rights", 
@@ -14,14 +13,44 @@ const module = {
 }
 
 const todos = [
-    { id: 1, title: "Task 1", completed: false , description: 'something'},
-    { id: 2, title: "Task 2", completed: true, description: "huh"},
-    { id: 3, title: "Task 3", completed: false, description: "3" },
-    { id: 4, title: "Task 4", completed: true, description: "4" },
+    { id: 1, title: "Task 1", completed: false , description: 'something', due: '2024-09-09'},
+    { id: 2, title: "Task 2", completed: true, description: "huh", due: '2024-09-09' },
+    { id: 3, title: "Task 3", completed: false, description: "3", due: '2024-09-09'},
+    { id: 4, title: "Task 4", completed: true, description: "4", due: '2024-09-09' },
 ];
 
 const Lab5 = (app) => {
 
+    app.post("/a5/todos", (req, res) => {
+        const newTodo = {
+            ...req.body, 
+            id: new Date().getTime(),
+        };
+        todos.push(newTodo); 
+        res.json(newTodo);
+    });
+
+    app.delete("/a5/todos/:id", (req, res) => {
+        const { id } = req.params;
+        const todo = todos.find((t) => t.id === parseInt(id));
+        if (!todo) {
+            res.status(404).json({ message: `Unable to delete Todo with ID ${id}` })
+        }
+        todos.splice(todos.indexOf(todo), 1);
+        res.sendStatus(200);
+    });
+
+    app.put("/a5/todos/:id", (req, res) => {
+        const { id } = req.params;
+        const todo = todos.find((t) => t.id === parseInt(id));
+        if (!todo) {
+            res.status(404).json({ message: `Unable to update Todo with ID ${id}` })
+        }
+        todo.title = req.body.title;
+        todo.description = req.body.description;
+        todo.completed = req.body.completed;
+        res.sendStatus(200);
+    });
 
     /* WORKING WITH ARRAYS OF OBJECTS */
     /* TODOS */
