@@ -2,10 +2,29 @@ import db from "../Database/index.js"
 
 function ModuleRoutes(app) {
 
-    const MODULES_API = "api/course/:cid/modules";
+    const MODULES_API = "/api/courses";
+
+    // UPDATE
+    app.put("/api/modules/:mid", (req, res) => {
+        const { mid } = req.params;
+        const moduleIndex = db.modules.findIndex(
+            (m) => m._id === mid);
+        db.modules[moduleIndex] = {
+            ...db.modules[moduleIndex], 
+            ...req.body
+        };
+        res.sendStatus(204);
+    });
+
+    // DELETE
+    app.delete("/api/modules/:mid", (req, res) => {
+        const { mid } = req.params;
+        db.modules = db.modules.filter((m) => m._id !== mid);
+        res.sendStatus(200);
+    });
 
     // CREATE
-    app.post("api/course/:cid/modules", (req, res) => {
+    app.post("/api/courses/:cid/modules", (req, res) => {
         const { cid } = req.params;
         const newModule = {
             ...req.body,
@@ -16,8 +35,8 @@ function ModuleRoutes(app) {
         res.send(newModule);
     });
 
-    // GET MODULES 
-    app.get("api/courses/:cid/modules", (req, res) => {
+    // READ MODULES 
+    app.get("/api/courses/:cid/modules", (req, res) => {
         const { cid } = req.params;
         const modules = db.modules
             .filter((m) => m.course === cid);
