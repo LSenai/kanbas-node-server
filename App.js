@@ -1,5 +1,4 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import CourseRoutes from './Kanbas/courses/routes.js';
 import ModuleRoutes from './Kanbas/modules/routes.js';
 import AssignmentRoutes from './Kanbas/assignments/routes.js';
@@ -8,7 +7,6 @@ import Hello from './Hello.js';
 import Lab5 from './Lab5.js';
 
 import cors from "cors";
-mongoose.connect("mongodb://localhost:27017/kanbas", {useNewUrlParser: true, useUnifiedTopology: true});
 
 
 const app = express();
