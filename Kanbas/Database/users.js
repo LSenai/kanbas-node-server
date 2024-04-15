@@ -126,7 +126,7 @@ export default [
     password: "hampton123",
     firstName: "Fred",
     lastName: "Hampton",
-    email: "HaptonIn@bpp.com",
+    email: "HamptonIn@bpp.com",
     dob: "1948-08-30",
     role: "STUDENT"
 }
