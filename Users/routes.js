@@ -3,10 +3,50 @@ import * as dao from "./dao.js";
 let currentUser = null;
 
 export default function UserRoutes(app) {
-    const createUser = async (req, res) => { };
-    const deleteUser = async (req, res) => { };
-    const findAllUsers = async (req, res) => { };
-    const findUserById = async (req, res) => { };
+    const createUser = async (req, res) => { 
+        try {
+            const user = req.body;
+            const newUser = await dao.createUser(user);
+            res.json(newUser);
+        } catch (error) {
+            console.error("Failed to create user:", error);
+            res.status(500).json({ message: "Failed to create user" });
+        }
+    };
+
+    const deleteUser = async (req, res) => {
+        try {
+            const status = await dao.deleteUser(req.params.userId);
+            if (status.deletedCount > 0) {
+                res.status(204).send();
+            } else {
+                res.status(404).json({ message: "User not found" });
+            }
+        } catch (error) {
+            console.error("Failed to delete user:", error);
+            res.status(500).json({ message: "Failed to delete user", error: error.toString() });
+        }
+     };
+
+    const findAllUsers = async (req, res) => {
+        try {
+            const users = await dao.findAllUsers(); 
+            res.json(users);
+        } catch (error) {
+            console.error("Failed to retrieve users:", error);
+            res.status(500).json({ message: "Failed to retrieve users" });
+        }
+    };
+    
+    const findUserById = async (req, res) => {
+        const { userId } = req.params;
+        const user = await dao.findUserById(userId);
+        if (user) {
+            res.json(user);
+        } else {
+            res.status(404).send("User not found");
+        }
+     };
 
     const updateUser = async (req, res) => { 
         const { userId } = req.params;
@@ -46,7 +86,7 @@ export default function UserRoutes(app) {
 
     app.post("/api/signup", signup);
 
-    app.post("/api/signin", signin);
+    app.post("/api/users/signin", signin);
 
     app.post("/api/signout", signout);
 

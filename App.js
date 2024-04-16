@@ -26,10 +26,14 @@ mongoose.connect("mongodb://127.0.0.1:27017/kanbas")
 
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000', // Adjust the port if your client is running on a different one
+    credentials: true
+}));
+
 app.use(express.json())
 
-// Define a simple route to check the database connection
+// Simple route to check the database connection
 app.get('/db-status', async (req, res) => {
     try {
       const dbStatus = await mongoose.connection.db.admin().serverStatus();
@@ -48,6 +52,3 @@ Hello(app);
 
 // Start the server
 const port = process.env.PORT || 4000;
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
