@@ -30,8 +30,15 @@ export default function UserRoutes(app) {
 
     const findAllUsers = async (req, res) => {
         try {
+            const { role } = req.query;
+            if (role) {
+                const users = await dao.findUsersByRole(role);
+                res.json(users);
+                return;
+            }
             const users = await dao.findAllUsers(); 
             res.json(users);
+            return;
         } catch (error) {
             console.error("Failed to retrieve users:", error);
             res.status(500).json({ message: "Failed to retrieve users" });
@@ -59,7 +66,17 @@ export default function UserRoutes(app) {
         }
     };
 
-    const signup = async (req, res) => { };
+    const signup = async (req, res) => {
+        const user = await dao.findUserByUsername(req.body.username);
+        if (user) {
+            res.status(400).json(
+                {message: "Username already taken"});
+                return; // Exit the function - professor's code didn't have this. could lead to issues
+        }
+        currentUser = await dao.createUser(req.body);
+        res.json(currentUser);
+     };
+
     const signin = async (req, res) => {
         const { username, password } = req.body;
         currentUser = await dao.findUserByCredentials(username, password);
@@ -69,7 +86,12 @@ export default function UserRoutes(app) {
             res.status(401).json({message: "Invalid credentials"});
         }
      };
-    const signout = async (req, res) => { };
+
+    const signout = async (req, res) => {
+        currentUser = null;
+        res.sendStatus(204);
+     };
+
     const profile = async (req, res) => {
         res.json(currentUser);
      };
@@ -84,11 +106,11 @@ export default function UserRoutes(app) {
 
     app.delete("/api/users/:userId", deleteUser);
 
-    app.post("/api/signup", signup);
+    app.post("/api/users/signup", signup);
 
     app.post("/api/users/signin", signin);
 
-    app.post("/api/signout", signout);
+    app.post("/api/users/signout", signout);
 
     app.post("/api/users/profile", profile);
 

@@ -27,7 +27,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/kanbas")
 
 const app = express();
 app.use(cors({
-    origin: 'http://localhost:3000', // Adjust the port if your client is running on a different one
+    origin: 'http://localhost:3000', 
     credentials: true
 }));
 
