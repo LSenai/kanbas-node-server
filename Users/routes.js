@@ -1,6 +1,6 @@
 import * as dao from "./dao.js";
 
-let currentUser = null;
+// let currentUser = null;
 
 export default function UserRoutes(app) {
     const createUser = async (req, res) => { 
@@ -73,26 +73,34 @@ export default function UserRoutes(app) {
                 {message: "Username already taken"});
                 return; // Exit the function - professor's code didn't have this. could lead to issues
         }
-        currentUser = await dao.createUser(req.body);
+        const currentUser = await dao.createUser(req.body);
+        req.session["currentUser"] = currentUser;
         res.json(currentUser);
-     };
+    };
 
+    
     const signin = async (req, res) => {
         const { username, password } = req.body;
-        currentUser = await dao.findUserByCredentials(username, password);
+        const currentUser = await dao.findUserByCredentials(username, password);
         if (currentUser) {
+            req.session["currentUser"] = currentUser;
             res.json(currentUser);
         } else {
             res.status(401).json({message: "Invalid credentials"});
         }
-     };
+    };
 
     const signout = async (req, res) => {
-        currentUser = null;
+        req.session.destroy();
         res.sendStatus(204);
      };
 
     const profile = async (req, res) => {
+        const currentUser = req.session["currentUser"];
+        if (!currentUser) {
+            res.status(403).json({message: "Not logged in"});
+            return;
+        }
         res.json(currentUser);
      };
 
